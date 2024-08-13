@@ -41,6 +41,7 @@ class MultiFitness(BaseFitness):
         :return: None
         """
 
+        self.num_objectives = conditions.count('optimize')
         super().__init__(obj_function, obj_value, input_data, penalty, conditions)
 
     def get_fitness_score(self, obj_score: Union[int, float], penalty_value: Union[int, float] = 0) ->\
@@ -90,16 +91,17 @@ class MultiFitness(BaseFitness):
         for idx in self.__idx_opt_value:
             individ['obj_score'].append(values.pop(idx))
 
-    def inferior(self, x: dict, y: dict) -> Union[dict, None]:
+    def dominated(self, x: dict, y: dict) -> Union[dict, None]:
         """
-        Computes the inferior of 2 individuals
+        Computes the dominated individual of 2
 
         :param x: dict, first individual data.
         :param y: dict, second individual data.
-        :return: dict, containing the inferior of x and y if there is one, None if there are no inferior individuals
+        :return: dict, containing the dominated individual of x and y if there is one,
+        None if there are no dominated individuals
         """
-        x_score = list(self.obj_function(x['phenotype']))
-        y_score = list(self.obj_function(y['phenotype']))
+        x_score = list(self.obj_function(x['phenotype']))[:self.num_objectives]
+        y_score = list(self.obj_function(y['phenotype']))[:self.num_objectives]
 
         if x_score == y_score:
             return None
@@ -127,7 +129,7 @@ class MultiFitness(BaseFitness):
 
         for i in range(len(ga_data.population)):
             for j in range(i+1, len(ga_data.population)):
-                inf = self.inferior(ga_data.population[i], ga_data.population[j])
+                inf = self.dominated(ga_data.population[i], ga_data.population[j])
                 if inf is not None:
                     inf['rank'] += 1
 
