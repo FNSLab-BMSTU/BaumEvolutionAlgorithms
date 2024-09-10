@@ -89,7 +89,7 @@ class MultiFitness(BaseFitness):
         """
         individ['obj_score'] = []
         for idx in self.__idx_opt_value:
-            individ['obj_score'].append(values.pop(idx))
+            individ['obj_score'].insert(0, values.pop(idx))
 
     def dominated(self, x: dict, y: dict) -> Union[dict, None]:
         """
@@ -100,20 +100,31 @@ class MultiFitness(BaseFitness):
         :return: dict, containing the dominated individual of x and y if there is one,
         None if there are no dominated individuals
         """
-        x_score = list(self.obj_function(x['phenotype']))[:self.num_objectives]
-        y_score = list(self.obj_function(y['phenotype']))[:self.num_objectives]
+        x_score = x['obj_score']
+        y_score = y['obj_score']
 
         if x_score == y_score:
             return None
 
-        max_score = x_score.copy()
-        for i in range(len(y_score)):
-            if max_score[i] < y_score[i]:
-                max_score[i] = y_score[i]
+        x_is_dominated = 0
 
-        if max_score == x_score:
+        for i in range(len(y_score)):
+            if x_score[i] < y_score[i]:
+                if x_is_dominated == 0:
+                    x_is_dominated = -1
+                elif x_is_dominated == 1:
+                    x_is_dominated = 0
+                    break
+            elif y_score[i] < x_score[i]:
+                if x_is_dominated == 0:
+                    x_is_dominated = 1
+                elif x_is_dominated == -1:
+                    x_is_dominated = 0
+                    break
+
+        if x_is_dominated == 1:
             return x
-        elif max_score == y_score:
+        elif x_is_dominated == -1:
             return y
         else:
             return None
@@ -140,8 +151,38 @@ class MultiFitness(BaseFitness):
         :param ga_data: GaData instance containing population and related data.
         :return: None
         """
+
         if ga_data.population.is_phenotype:
             ga_data.population.get_phenotype()
+            ga_data.population.swap()
+
+        for individ in ga_data.population:
+            values = self.calc_obj_func(genotype=individ['genotype'])
+            if self._BaseFitness__is_conditional_opt:
+                self.set_obj_score(values, individ)
+                for i_v, v in enumerate(values):
+                    if self.conditions[i_v] == '<=':
+                        if v > 0:
+                            individ['feasible'] = False
+                    else:
+                        if v != 0:
+                            individ['feasible'] = False
+
+                penalty_value = self.get_penalty_value(values=values, idx_generation=ga_data.idx_generation,
+                                                       best_individ=ga_data.best_solution)
+                for idx in range(len(individ['obj_score'])):
+                    individ['obj_score'][idx] += penalty_value
+            else:
+                individ['obj_score'] = values
+
         self.assign_ranks(ga_data)
 
-        super().execute(ga_data)
+        for individ in ga_data.population:
+            individ['score'] = self.get_fitness_score(individ)
+
+        if ga_data.population.is_phenotype:
+            ga_data.population.swap()
+
+        # if ga_data.population.is_phenotype:
+        #     ga_data.population.get_phenotype()
+        # super().execute(ga_data)
