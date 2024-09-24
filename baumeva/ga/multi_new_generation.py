@@ -6,6 +6,16 @@ class MultiNewGeneration(NewGeneration):
     """
     Class for creating a new generation of individuals in a genetic algorithm in case of multiobjective optimization.
     """
+    def __init__(self, transfer_parents: str = 'best', num_elites: int = 1) -> None:
+        """
+        Initialize the MultiNewGeneration instance.
+
+        :param transfer_parents: strategy for transferring parents to the next generation.
+        :param num_elites: number of elites in case of the 'best' strategy.
+        :return: None
+        """
+        self.num_elites = num_elites
+        super().__init__(transfer_parents)
 
     def add_best(self, ga_data: MultiGaData, num_elites):
         """
@@ -15,13 +25,7 @@ class MultiNewGeneration(NewGeneration):
         :param num_elites: number of parent individuals to add.
         :return: list of elites to add to the population.
         """
-        elites = []
-
-        for individ in ga_data.population:
-            if individ['rank'] == 1:
-                elites.append(individ)
-            else:
-                break
+        elites = ga_data.population[:num_elites]
 
         return elites
 
@@ -32,14 +36,7 @@ class MultiNewGeneration(NewGeneration):
         :param ga_data: MultiGaData instance containing population and related data.
         :return: None
         """
-        ga_data.children.__dict__ = ga_data.population.__dict__
         if ga_data.population.is_phenotype:
             ga_data.population.get_phenotype()
-        # ga_data.assign_ranks()
-        # if not ga_data.population.is_sorted:
-        #     ga_data.population.sort_by_dict('rank')
 
-        self.add_parents(ga_data, num_elites=10)
-
-        ga_data.population = ga_data.children
-        ga_data.population.is_sorted = False
+        super().execute(ga_data)

@@ -1,7 +1,7 @@
 from typing import List, Callable, Union, Any
 from .ga import GaData, MultiGaData, BinaryPopulation, BinaryGrayPopulation, VEGAHyperbolaFitness, BasePenalty, \
     VEGATournamentSelection, VEGABalancedSelection, VEGARankedSelection, OnePointCrossover, BinStringMutation, \
-    NewGeneration
+    NewGeneration, MultiNewGeneration
 
 
 class VEGA:
@@ -11,7 +11,7 @@ class VEGA:
     def __init__(self, num_generations: int, num_individ: int, gens: tuple, obj_function: Callable,
                  obj_value: Union[int, float] = None, input_data: Any = None, penalty: BasePenalty = None,
                  conditions: list = None, is_gray: bool = False, children_percent: float = 0.95,
-                 early_stop: Union[int, None] = 10, input_population: List[list] = None, tournament_size: int = 3,
+                 early_stop: Union[int, None] = 10, input_population: List[list] = None, tournament_size: int = 5,
                  mutation_lvl: Union[str, float] = 'normal', transfer_parents: str = 'best',
                  is_print: bool = True) -> None:
         """
@@ -86,7 +86,7 @@ class VEGA:
         selection = VEGATournamentSelection(num_objectives=num_objectives)
         cross = OnePointCrossover()
         mutation = BinStringMutation(mutation_lvl=self.mutation_lvl)
-        new_generation = NewGeneration(transfer_parents=self.transfer_parents)
+        new_generation = MultiNewGeneration(transfer_parents=self.transfer_parents)
         # creating first generation
         population.fill()
         ga_data.population = population
