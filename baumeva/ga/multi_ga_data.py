@@ -40,6 +40,7 @@ class MultiGaData(GaData):
 
         if not self.population.is_sorted:
             self.population.sort_by_dict('rank')
+            self.population.is_sorted = True
 
         pareto_set = []
         for individ in self.population:
