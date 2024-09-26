@@ -170,8 +170,7 @@ class BaseFitness(ABC):
                         else:
                             if v != 0:
                                 individ['feasible'] = False
-                        # individ['feasible'] = True if ((v <= 0) and (v == 0)) else False
-                        # print(v)
+
                     penalty_value = self.get_penalty_value(values=values, idx_generation=ga_data.idx_generation,
                                                            best_individ=ga_data.best_solution)
                     individ['score'] = self.get_fitness_score(individ, penalty_value)

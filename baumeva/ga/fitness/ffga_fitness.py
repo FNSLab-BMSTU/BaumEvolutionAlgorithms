@@ -20,11 +20,6 @@ class FFGAFitness(MultiFitness):
 
         score = 1.0 / (1 + individ['rank'])
 
-        # if self.obj_value is not None:
-        #     score = [1.0 / (1 + abs(self.obj_value[i] - obj_score[i]) + penalty_value) for i in range(len(obj_score))]
-        # else:
-        #     score = [-(score + penalty_value) for score in obj_score]
-
         return score
 
     def execute(self, ga_data: MultiGaData) -> None:
