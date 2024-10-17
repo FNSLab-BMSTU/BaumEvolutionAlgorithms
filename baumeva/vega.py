@@ -69,8 +69,10 @@ class VEGA:
         :return: GaData
         """
         # init GaData & Population
-        num_objectives = len(self.obj_function([0]*len(self.gens))) if self.conditions is None\
-            else self.conditions.count('optimize')
+        if self.conditions is None:
+            self.conditions = ['optimize']*len(self.obj_function([0]*len(self.gens)))
+        num_objectives = self.conditions.count('optimize')
+
         ga_data = MultiGaData(num_generations=self.num_generations, children_percent=self.children_percent,
                               early_stop=self.early_stop)
         if self.is_gray:

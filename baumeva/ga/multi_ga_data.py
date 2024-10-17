@@ -1,6 +1,6 @@
-from copy import deepcopy
 from typing import List, Union
 from .ga_data import GaData
+import pickle
 
 
 class MultiGaData(GaData):
@@ -55,7 +55,7 @@ class MultiGaData(GaData):
             self.best_solution = {'pareto_set':[]}
 
         if self.best_solution['pareto_set'] != pareto_set:
-            self.best_solution['pareto_set'] = deepcopy(pareto_set)
+            self.best_solution['pareto_set'] = pickle.loads(pickle.dumps(pareto_set))
             self.best_solution['idx_generation'] = self.idx_generation
             self.num_generation_no_improve = 0
         else:
@@ -64,23 +64,29 @@ class MultiGaData(GaData):
         self.idx_generation += 1
 
     @staticmethod
-    def print_list(head, lst, label) -> None:
+    def print_list(head: str, lst: list, label: str) -> None:
+        """
+        Formatted printing of values for a given field of all list elements.
+
+        :param head: header - printed on top.
+        :param lst: a list to print.
+        :param label: the name of the field to print.
+        :return: None
+        """
         print(f'\t{head}:')
         for elem in lst:
             print(f'\t\t{elem[label]}')
 
     def print_best_solution(self) -> None:
         """
-        Method for print params of the best individ.
+        Method for printing parameters of the best individual.
+
         :return: None
         """
         print('|' + '=' * 85 + '|')
         print(f'Index generation: {self.idx_generation - 1}')
         print('Best solution:')
         print(f'\tindex generation: {self.best_solution["idx_generation"]}')
-        # print(f'\tgenotypes: {self.best_solution["genotype"]}')
-        # if 'phenotype' in self.best_solution.keys():
+
         self.print_list('phenotypes', self.best_solution["pareto_set"], 'phenotype')
-        # print(f'\tfitness score: {self.best_solution["score"]}')
         self.print_list('objective scores', self.best_solution["pareto_set"], 'obj_score')
-        # print(f'\tfeasible region: {self.best_solution["feasible"]}')

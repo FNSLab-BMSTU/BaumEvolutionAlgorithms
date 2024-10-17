@@ -1,5 +1,5 @@
 from random import sample
-from copy import deepcopy
+import pickle
 from .base_selection import BaseSelection
 from baumeva.ga import GaData
 
@@ -73,7 +73,7 @@ class TournamentSelection(BaseSelection):
                 if len(parents_pair) == 0 or best['idx_individ'] != parents_pair[0]['idx_individ']:
                     parents_pair.append(best)
 
-            ga_data.parents.extend(deepcopy(parent) for parent in parents_pair)
+            ga_data.parents.extend(pickle.loads(pickle.dumps(parent)) for parent in parents_pair)
 
     def execute(self, ga_data: GaData) -> None:
         """

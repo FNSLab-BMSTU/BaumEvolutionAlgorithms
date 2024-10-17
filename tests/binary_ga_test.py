@@ -1,7 +1,7 @@
 from baumeva import BinaryGA
 from baumeva.ga import DynamicPenalty, AdaptivePenalty, StaticPenalty
 import math
-import numpy as np
+# import numpy as np
 
 
 def func_grivanka(value_list):
@@ -17,18 +17,6 @@ def parabola_conditions(x: list) -> tuple:
     res = -x[0]*x[0] + 9
     condition_1 = -x[0]-3
     return res, condition_1
-
-
-def func_c01(gens: list) -> tuple:
-    np_gens = np.array(gens)
-
-    f = 0
-    g = 0
-    for idx, gen in enumerate(np_gens):
-        g += (gen**2 - 5000*math.cos(0.1*math.pi*gen) - 4000)
-        f += np.sum(np_gens[:idx+1])**2
-
-    return f, g
 
 
 binary_ga = BinaryGA(num_generations=100,

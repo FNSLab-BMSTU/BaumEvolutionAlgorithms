@@ -68,6 +68,8 @@ class FFGA:
         :return: GaData
         """
         # init GaData & Population
+        if self.conditions is None:
+            self.conditions = ['optimize']*len(self.obj_function([0]*len(self.gens)))
 
         ga_data = MultiGaData(num_generations=self.num_generations, children_percent=self.children_percent,
                               early_stop=self.early_stop)

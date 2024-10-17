@@ -1,7 +1,6 @@
 from typing import List, Callable, Union, Any
 from .ga import GaData, CatPopulation, HyperbolaFitness, BasePenalty, TournamentSelection,\
                 NewGeneration, CategoricalMutation, UniformCrossover
-from copy import deepcopy
 
 
 class CategoricalGA:

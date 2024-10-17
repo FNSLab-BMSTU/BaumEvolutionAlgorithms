@@ -1,5 +1,5 @@
 from random import random
-from copy import deepcopy
+import pickle
 from .base_selection import BaseSelection
 from baumeva.ga import GaData
 
@@ -71,7 +71,7 @@ class BalancedSelection(BaseSelection):
                 if len(idxs) == 0 or idx != idxs[-1]:
                     idxs.append(idx)
 
-            ga_data.parents.extend(deepcopy(ga_data.population[idx]) for idx in idxs)
+            ga_data.parents.extend(pickle.loads(pickle.dumps(ga_data.population[idx])) for idx in idxs)
 
     def execute(self, ga_data: GaData) -> None:
         """

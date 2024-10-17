@@ -1,7 +1,7 @@
 # author: Aleksei
 
 # version
-__version__ = '0.7.0'
+__version__ = '0.7.1'
 
 from .collector_ga import CollectorGA
 from .combinatory_ga import CombinatoryGA
